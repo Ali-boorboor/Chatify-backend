@@ -29,7 +29,7 @@ export const signup = async (req: FastifyRequest, res: FastifyReply) => {
         ? `${process.env.BASE_FILE_URL}${process.env.USERS_COVER_URL}${file?.filename}`
         : undefined,
       identifier: `@${username}`,
-      description,
+      description: description.trim()?.length < 1 ? undefined : description,
       username,
       password,
     });

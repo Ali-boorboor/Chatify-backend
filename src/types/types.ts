@@ -66,28 +66,35 @@ export type checkUserPasswordType = {
 export type chatDataType = {
   title: string;
   description?: string;
-  users: any;
+  users: string[];
   cover?: string;
-  messages?: any;
+  messages?: string[];
 };
 
 export type chatReqDataType = {
   title: string;
   description?: string;
   users: any;
-  messages?: any;
+  messages?: string[];
+};
+
+export type chatEditDataType = {
+  title?: string;
+  description?: string;
+  users?: string[];
+  messages?: string[];
 };
 
 export type folderDataType = {
   title: string;
   href: string;
-  chats?: any;
-  user: any;
+  chats?: string[];
+  user: string;
 };
 
 export type folderReqDataType = {
   title: string;
-  chats?: any;
+  chats?: string[];
 };
 
 export type userInfoType = {
@@ -97,9 +104,11 @@ export type userInfoType = {
 
 export type messageDataType = {
   message: string;
-  sender: any;
+  sender: string;
 };
 
-export type messageReqDataType = {
+export type messageDatasSocketType = {
   message: string;
+  chatID: string;
+  senderID: string;
 };

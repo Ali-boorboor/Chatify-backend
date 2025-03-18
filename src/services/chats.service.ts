@@ -1,5 +1,6 @@
 import ChatModel from "#m/Chat";
-import type { IDType, chatDataType } from "#t/types";
+import type { IDType, chatDataType, chatEditDataType } from "#t/types";
+import type { UpdateQuery } from "mongoose";
 
 export const createChat = async (chatData: chatDataType) => {
   const createdChat = await ChatModel.create(chatData);
@@ -41,4 +42,17 @@ export const getOneChatByTitle = async (title: string) => {
     .lean();
 
   return user;
+};
+
+export const editOneChatByID = async (
+  chatID: IDType,
+  newData: UpdateQuery<chatEditDataType>
+) => {
+  const chatDatas = await ChatModel.findByIdAndUpdate(chatID, newData)
+    .select("-__v")
+    .populate("messages", "-__v")
+    .populate("users", "-password -createdAt -updatedAt -__v")
+    .lean();
+
+  return chatDatas;
 };

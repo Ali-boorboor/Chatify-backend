@@ -6,7 +6,6 @@ export const createMessage = async (MessageData: messageDataType) => {
 
   const newMessage = createdMessage.toObject();
 
-  Reflect.deleteProperty(newMessage, "sender");
   Reflect.deleteProperty(newMessage, "__v");
 
   return newMessage;
