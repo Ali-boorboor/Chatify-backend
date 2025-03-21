@@ -27,7 +27,14 @@ export const getAllChats = async () => {
 export const getOneChatByID = async (chatID: IDType) => {
   const chat = await ChatModel.findById(chatID)
     .select("-__v")
-    .populate("messages", "-__v")
+    .populate({
+      path: "messages",
+      select: "-__v",
+      populate: {
+        path: "sender",
+        select: "-__v -password -createdAt -updatedAt",
+      },
+    })
     .populate("users", "-password -createdAt -updatedAt -__v")
     .lean();
 

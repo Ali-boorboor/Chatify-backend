@@ -14,7 +14,9 @@ import app from "#/app";
 const fastify = Fastify({ logger: true });
 
 // * register helmet to use for secure headers
-fastify.register(fastifyHelmet);
+fastify.register(fastifyHelmet, {
+  crossOriginResourcePolicy: false,
+});
 
 // * register json web token to use
 fastify.register(fastifyJwt, {

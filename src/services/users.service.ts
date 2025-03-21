@@ -19,14 +19,14 @@ export const getAllUsers = async () => {
   return users;
 };
 
-export const getOneUserByID = async (userID: IDType) => {
-  const user = await UserModel.findById(userID).select("-__v").lean();
+export const getOneUser = async (filter: object) => {
+  const user = await UserModel.findOne(filter).select("-__v").lean();
 
   return user;
 };
 
-export const getOneUserByUsername = async (username: string) => {
-  const user = await UserModel.findOne({ username }).select("-__v").lean();
+export const getOneUserByID = async (userID: IDType) => {
+  const user = await UserModel.findById(userID).select("-__v").lean();
 
   return user;
 };

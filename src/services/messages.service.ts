@@ -4,9 +4,10 @@ import type { IDType, messageDataType } from "#t/types";
 export const createMessage = async (MessageData: messageDataType) => {
   const createdMessage = await MessageModel.create(MessageData);
 
-  const newMessage = createdMessage.toObject();
-
-  Reflect.deleteProperty(newMessage, "__v");
+  const newMessage = await MessageModel.findById(createdMessage?._id)
+    .populate("sender", "-password -__v -createdAt -updatedAt")
+    .select("-__v")
+    .lean();
 
   return newMessage;
 };

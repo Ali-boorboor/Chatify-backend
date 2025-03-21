@@ -9,17 +9,22 @@ export type UserDataType = {
   description?: string;
 };
 
-export type UserReqDataType = {
+export type signupReqDataType = {
   username: string;
+  email: string;
   password: string;
-  description: string;
+};
+
+export type loginReqDataType = {
+  identifier: string;
+  password: string;
 };
 
 export type IDType = string;
 
 export type UserNewDataType = {
-  identifier?: string;
   username?: string;
+  email?: string;
   password?: string;
   description?: string;
   cover?: string;

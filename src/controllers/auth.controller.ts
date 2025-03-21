@@ -6,16 +6,18 @@ import removeFileHandler from "#u/removeFileHandler";
 import checkRepeatedData from "#u/checkRepeatedData";
 import checkUserPassword from "#u/checkUserPassword";
 import checkUserExistance from "#u/checkUserExistance";
-import type { FastifyRequest } from "fastify/types/request";
 import type { FastifyReply } from "fastify/types/reply";
-import type { UserReqDataType } from "#t/types";
+import type { FastifyRequest } from "fastify/types/request";
+import type { signupReqDataType, loginReqDataType } from "#t/types";
 
 export const signup = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const { username, password, description } = req.body as UserReqDataType;
+    const { username, email, password } = req.body as signupReqDataType;
     const file: any = req.file;
 
-    const repeatedUserData = await service.getOneUserByUsername(username);
+    const repeatedUserData = await service.getOneUser({
+      $or: [{ username }, { email }],
+    });
 
     checkRepeatedData({
       checkableData: repeatedUserData,
@@ -28,8 +30,7 @@ export const signup = async (req: FastifyRequest, res: FastifyReply) => {
       cover: file?.filename
         ? `${process.env.BASE_FILE_URL}${process.env.USERS_COVER_URL}${file?.filename}`
         : undefined,
-      identifier: `@${username}`,
-      description: description.trim()?.length < 1 ? undefined : description,
+      identifier: `@${username.trim().toLowerCase()}`,
       username,
       password,
     });
@@ -54,9 +55,11 @@ export const signup = async (req: FastifyRequest, res: FastifyReply) => {
 
 export const login = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const { username, password } = req.body as UserReqDataType;
+    const { identifier, password } = req.body as loginReqDataType;
 
-    const userData = await service.getOneUserByUsername(username);
+    const userData = await service.getOneUser({
+      $or: [{ username: identifier }, { email: identifier }],
+    });
 
     checkUserExistance({ checkableData: userData, res });
 
@@ -72,9 +75,15 @@ export const login = async (req: FastifyRequest, res: FastifyReply) => {
       res
     );
 
+    const userInfo = {
+      userID: userData?._id,
+      username: userData?.username,
+      identifier: userData?.identifier,
+    };
+
     return response({
       res,
-      data: { token },
+      data: { userInfo, token },
       message: "Logged in successfully",
     });
   } catch (err: any) {
