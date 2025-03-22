@@ -4,6 +4,7 @@ import type { FastifyRequest } from "fastify/types/request";
 export type UserDataType = {
   identifier: string;
   username: string;
+  email: string;
   cover?: string;
   password: string;
   description?: string;

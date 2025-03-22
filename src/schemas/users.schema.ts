@@ -12,6 +12,10 @@ const schema = new mongoose.Schema(
       max: 20,
       required: true,
     },
+    email: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       max: 100,
