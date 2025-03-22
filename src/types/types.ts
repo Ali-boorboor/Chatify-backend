@@ -117,3 +117,8 @@ export type messageDatasSocketType = {
   chatID: string;
   senderID: string;
 };
+
+export type checkParamType = {
+  param: string;
+  res: FastifyReply;
+};

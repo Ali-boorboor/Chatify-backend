@@ -6,6 +6,7 @@ const usersRouter = (fastify: FastifyInstance) => {
   fastify.route({
     method: ["GET", "PUT", "DELETE"],
     url: "/:userID",
+    preHandler: authGuard,
     handler: async (req, res) => {
       switch (req.method) {
         case "GET":

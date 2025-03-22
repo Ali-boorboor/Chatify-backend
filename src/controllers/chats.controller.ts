@@ -1,19 +1,20 @@
 import path from "path";
 import response from "#u/response";
+import checkParam from "#u/checkParam";
 import * as service from "#s/chats.service";
 import checkRepeatedData from "#u/checkRepeatedData";
 import removeFileHandler from "#u/removeFileHandler";
 import checkNoContentData from "#u/checkNoContentData";
 import type { FastifyRequest } from "fastify/types/request";
 import type { FastifyReply } from "fastify/types/reply";
-import type { chatReqDataType } from "#t/types";
+import type { chatReqDataType, userInfoType } from "#t/types";
 
 export const create = async (req: FastifyRequest, res: FastifyReply) => {
   try {
     const { title, description, users } = req.body as chatReqDataType;
     const file: any = req.file;
 
-    const repeatedChatData = await service.getOneChatByTitle(title);
+    const repeatedChatData = await service.getOneChat({ title });
 
     checkRepeatedData({
       checkableData: repeatedChatData,
@@ -51,11 +52,28 @@ export const create = async (req: FastifyRequest, res: FastifyReply) => {
 
 export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const chats = await service.getAllChats();
+    const { _id } = req.user as userInfoType;
+    const chats = await service.getAllChats(_id);
 
     checkNoContentData({ checkableData: chats, res });
 
     return response({ res, message: "Chat rooms list", data: chats });
+  } catch (err: any) {
+    throw res.internalServerError(err?.message);
+  }
+};
+
+export const getOne = async (req: FastifyRequest, res: FastifyReply) => {
+  try {
+    const { chatID } = req.params as { chatID: string };
+
+    checkParam({ param: chatID, res });
+
+    const chat = await service.getOneChat({ _id: chatID });
+
+    checkNoContentData({ checkableData: chat!, res });
+
+    return response({ res, message: "Chat Datas", data: chat! });
   } catch (err: any) {
     throw res.internalServerError(err?.message);
   }

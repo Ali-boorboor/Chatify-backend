@@ -1,4 +1,5 @@
 import uploader from "#mid/uploader";
+import authGuard from "#mid/auth.guard";
 import * as controller from "#c/chats.controller";
 import type { FastifyInstance } from "fastify";
 
@@ -9,11 +10,13 @@ const multerUploader = uploader({ destination });
 const chatsRouter = (fastify: FastifyInstance) => {
   fastify.post(
     "/create",
-    { preHandler: multerUploader.single("cover") },
+    { preHandler: [authGuard, multerUploader.single("cover")] },
     controller.create
   );
 
-  fastify.get("/", controller.getAll);
+  fastify.get("/", { preHandler: authGuard }, controller.getAll);
+
+  fastify.get("/:chatID", { preHandler: authGuard }, controller.getOne);
 };
 
 export default chatsRouter;

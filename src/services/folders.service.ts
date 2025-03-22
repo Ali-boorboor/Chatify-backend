@@ -13,8 +13,10 @@ export const createFolder = async (folderData: folderDataType) => {
   return newFolder;
 };
 
-export const getAllFolders = async () => {
-  const folders = await FolderModel.find({}).select("-__v -chats -user").lean();
+export const getAllFolders = async (userID: string) => {
+  const folders = await FolderModel.find({ user: userID })
+    .select("-__v -chats -user")
+    .lean();
 
   return folders;
 };

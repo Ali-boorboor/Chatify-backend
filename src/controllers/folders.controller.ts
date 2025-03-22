@@ -1,4 +1,5 @@
 import response from "#u/response";
+import checkParam from "#u/checkParam";
 import * as service from "#s/folders.service";
 import checkRepeatedData from "#u/checkRepeatedData";
 import checkNoContentData from "#u/checkNoContentData";
@@ -39,11 +40,29 @@ export const create = async (req: FastifyRequest, res: FastifyReply) => {
 
 export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const folders = await service.getAllFolders();
+    const { _id } = req.user as userInfoType;
+
+    const folders = await service.getAllFolders(_id);
 
     checkNoContentData({ checkableData: folders, res });
 
     return response({ res, message: "Folders list", data: folders });
+  } catch (err: any) {
+    throw res.internalServerError(err?.message);
+  }
+};
+
+export const getOne = async (req: FastifyRequest, res: FastifyReply) => {
+  try {
+    const { folderID } = req.params as { folderID: string };
+
+    checkParam({ param: folderID, res });
+
+    const folder = await service.getOneFolderByID(folderID);
+
+    checkNoContentData({ checkableData: folder!, res });
+
+    return response({ res, message: "Folder ", data: folder! });
   } catch (err: any) {
     throw res.internalServerError(err?.message);
   }

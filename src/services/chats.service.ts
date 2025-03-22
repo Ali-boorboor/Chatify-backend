@@ -15,13 +15,25 @@ export const createChat = async (chatData: chatDataType) => {
   return newChat;
 };
 
-export const getAllChats = async () => {
-  const users = await ChatModel.find({})
+export const getAllChats = async (userID: string) => {
+  const chats = await ChatModel.find({ users: userID })
     .select("-__v -messages")
     .populate("users", "username identifier")
     .lean();
 
-  return users;
+  console.log(chats);
+
+  return chats;
+};
+
+export const getOneChat = async (filter: object) => {
+  const chat = await ChatModel.findOne(filter)
+    .select("-__v")
+    .populate("messages", "-__v")
+    .populate("users", "-password -createdAt -updatedAt -__v")
+    .lean();
+
+  return chat;
 };
 
 export const getOneChatByID = async (chatID: IDType) => {
@@ -41,16 +53,6 @@ export const getOneChatByID = async (chatID: IDType) => {
   return chat;
 };
 
-export const getOneChatByTitle = async (title: string) => {
-  const user = await ChatModel.findOne({ title })
-    .select("-__v")
-    .populate("messages", "-__v")
-    .populate("users", "-password -createdAt -updatedAt -__v")
-    .lean();
-
-  return user;
-};
-
 export const editOneChatByID = async (
   chatID: IDType,
   newData: UpdateQuery<chatEditDataType>
@@ -62,4 +64,12 @@ export const editOneChatByID = async (
     .lean();
 
   return chatDatas;
+};
+
+export const deleteOneChatByID = async (chatID: IDType) => {
+  const deletedChat = await ChatModel.findByIdAndDelete(chatID)
+    .select("-__v -users -createdAt -updatedAt -messages")
+    .lean();
+
+  return deletedChat;
 };

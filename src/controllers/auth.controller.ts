@@ -8,7 +8,11 @@ import checkUserPassword from "#u/checkUserPassword";
 import checkUserExistance from "#u/checkUserExistance";
 import type { FastifyReply } from "fastify/types/reply";
 import type { FastifyRequest } from "fastify/types/request";
-import type { signupReqDataType, loginReqDataType } from "#t/types";
+import type {
+  signupReqDataType,
+  loginReqDataType,
+  userInfoType,
+} from "#t/types";
 
 export const signup = async (req: FastifyRequest, res: FastifyReply) => {
   try {
@@ -88,5 +92,39 @@ export const login = async (req: FastifyRequest, res: FastifyReply) => {
     });
   } catch (err: any) {
     throw res.internalServerError(err?.message);
+  }
+};
+
+export const logout = async (req: FastifyRequest, res: FastifyReply) => {
+  const { _id, username } = req.user as userInfoType;
+
+  return response({
+    res,
+    data: {
+      userDatas: {
+        _id,
+        username,
+      },
+    },
+    message: "Logged out successfully",
+  });
+};
+
+export const auth = async (req: FastifyRequest, res: FastifyReply) => {
+  try {
+    const { _id, username } = req.user as userInfoType;
+
+    return response({
+      res,
+      data: {
+        userDatas: {
+          _id,
+          username,
+        },
+      },
+      message: "Token is valid",
+    });
+  } catch (err: any) {
+    throw res.unauthorized("Invalid token");
   }
 };

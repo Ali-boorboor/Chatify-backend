@@ -5,7 +5,9 @@ import type { FastifyInstance } from "fastify";
 const foldersRouter = (fastify: FastifyInstance) => {
   fastify.post("/create", { preHandler: authGuard }, controller.create);
 
-  fastify.get("/", controller.getAll);
+  fastify.get("/", { preHandler: authGuard }, controller.getAll);
+
+  fastify.get("/:folderID", { preHandler: authGuard }, controller.getOne);
 };
 
 export default foldersRouter;
