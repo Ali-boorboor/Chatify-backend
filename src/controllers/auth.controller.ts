@@ -1,5 +1,6 @@
 import path from "path";
 import response from "#u/response";
+import verifyCodeModel from "#m/verifyCode";
 import * as service from "#s/users.service";
 import generateToken from "#u/generateToken";
 import emailConfigs from "#cnfg/emailConfigs";
@@ -7,6 +8,7 @@ import removeFileHandler from "#u/removeFileHandler";
 import checkRepeatedData from "#u/checkRepeatedData";
 import checkUserPassword from "#u/checkUserPassword";
 import checkUserExistance from "#u/checkUserExistance";
+import checkNoContentData from "#u/checkNoContentData";
 import generateRandomCode from "#u/generateRandomCode";
 import type { FastifyReply } from "fastify/types/reply";
 import type { FastifyRequest } from "fastify/types/request";
@@ -43,6 +45,8 @@ export const signup = async (req: FastifyRequest, res: FastifyReply) => {
     });
 
     const randomCode = generateRandomCode();
+
+    await verifyCodeModel.create({ code: randomCode });
 
     emailConfigs.sendMail(
       {
@@ -142,5 +146,30 @@ export const auth = async (req: FastifyRequest, res: FastifyReply) => {
     });
   } catch (err: any) {
     throw res.unauthorized("Invalid token");
+  }
+};
+
+export const verifyCode = async (req: FastifyRequest, res: FastifyReply) => {
+  try {
+    const { code } = req.body as { code: string };
+
+    const foundCode = await verifyCodeModel.findOne({ code }).lean();
+
+    checkNoContentData({ checkableData: foundCode!, res });
+
+    if (foundCode?.usedTime! >= foundCode?.maxUse!) {
+      throw res.unauthorized("Invalid code");
+    }
+
+    await verifyCodeModel.findByIdAndUpdate(foundCode?._id, {
+      $inc: { usedTime: 1 },
+    });
+
+    return response({
+      res,
+      message: "Code is valid",
+    });
+  } catch (err: any) {
+    throw res.internalServerError(err?.message);
   }
 };
