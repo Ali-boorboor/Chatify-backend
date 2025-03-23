@@ -1,8 +1,8 @@
 import path from "path";
 import response from "#u/response";
-import nodemailer from "nodemailer";
 import * as service from "#s/users.service";
 import generateToken from "#u/generateToken";
+import emailConfigs from "#cnfg/emailConfigs";
 import removeFileHandler from "#u/removeFileHandler";
 import checkRepeatedData from "#u/checkRepeatedData";
 import checkUserPassword from "#u/checkUserPassword";
@@ -44,16 +44,7 @@ export const signup = async (req: FastifyRequest, res: FastifyReply) => {
 
     const randomCode = generateRandomCode();
 
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      from: process.env.EMAIL_USER,
-    });
-
-    transporter.sendMail(
+    emailConfigs.sendMail(
       {
         to: email,
         subject: "Welcome to Chatify",
