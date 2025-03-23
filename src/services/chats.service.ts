@@ -21,8 +21,6 @@ export const getAllChats = async (userID: string) => {
     .populate("users", "username identifier")
     .lean();
 
-  console.log(chats);
-
   return chats;
 };
 

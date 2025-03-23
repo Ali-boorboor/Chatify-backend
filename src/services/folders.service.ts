@@ -15,7 +15,8 @@ export const createFolder = async (folderData: folderDataType) => {
 
 export const getAllFolders = async (userID: string) => {
   const folders = await FolderModel.find({ user: userID })
-    .select("-__v -chats -user")
+    .select("-__v -user")
+    .populate("chats", "-__v -users -messages")
     .lean();
 
   return folders;

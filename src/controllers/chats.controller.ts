@@ -69,7 +69,7 @@ export const getOne = async (req: FastifyRequest, res: FastifyReply) => {
 
     checkParam({ param: chatID, res });
 
-    const chat = await service.getOneChat({ _id: chatID });
+    const chat = await service.getOneChatByID(chatID);
 
     checkNoContentData({ checkableData: chat!, res });
 
