@@ -101,6 +101,7 @@ export const login = async (req: FastifyRequest, res: FastifyReply) => {
 
     const userInfo = {
       userID: userData?._id,
+      cover: userData?.cover,
       username: userData?.username,
       identifier: userData?.identifier,
     };

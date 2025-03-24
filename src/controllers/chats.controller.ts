@@ -30,6 +30,7 @@ export const create = async (req: FastifyRequest, res: FastifyReply) => {
       title,
       users: JSON.parse(users),
       description,
+      identifier: `#${title.trim().toLowerCase()}`,
     });
 
     return response({

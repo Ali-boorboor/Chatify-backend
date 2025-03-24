@@ -75,6 +75,7 @@ export type chatDataType = {
   users: string[];
   cover?: string;
   messages?: string[];
+  identifier: string;
 };
 
 export type chatReqDataType = {

@@ -16,7 +16,7 @@ export const createChat = async (chatData: chatDataType) => {
 };
 
 export const getAllChats = async (userID: string) => {
-  const chats = await ChatModel.find({ users: userID })
+  const chats = await ChatModel.find({})
     .select("-__v -messages")
     .populate("users", "username identifier")
     .lean();
@@ -42,10 +42,10 @@ export const getOneChatByID = async (chatID: IDType) => {
       select: "-__v",
       populate: {
         path: "sender",
-        select: "-__v -password -createdAt -updatedAt",
+        select: "-__v -password -createdAt -updatedAt -email",
       },
     })
-    .populate("users", "-password -createdAt -updatedAt -__v")
+    .populate("users", "-email -password -createdAt -updatedAt -__v")
     .lean();
 
   return chat;

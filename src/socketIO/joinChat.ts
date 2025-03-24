@@ -12,9 +12,10 @@ const joinChat = (fastify: FastifyInstance, socket: Socket) => {
       socket.join(chatID);
 
       const chat = await getOneChatByID(chatID);
-      
+
       if (chat) {
         socket.emit("chatHistory", chat?.messages);
+        socket.emit("chatInfo", chat);
       }
     });
   } catch (err: any) {

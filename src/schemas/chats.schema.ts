@@ -17,6 +17,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    identifier: {
+      type: String,
+      required: true,
+    },
     users: [
       {
         type: mongoose.Types.ObjectId,
