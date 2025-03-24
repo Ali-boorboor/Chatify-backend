@@ -62,7 +62,7 @@ export const getOne = async (req: FastifyRequest, res: FastifyReply) => {
 
     checkNoContentData({ checkableData: folder!, res });
 
-    return response({ res, message: "Folder ", data: folder! });
+    return response({ res, message: "Folder Datas", data: folder! });
   } catch (err: any) {
     throw res.internalServerError(err?.message);
   }
