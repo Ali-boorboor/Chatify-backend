@@ -4,20 +4,23 @@ import type { Socket } from "socket.io";
 
 const joinChat = (fastify: FastifyInstance, socket: Socket) => {
   try {
-    socket.on("joinChat", async ({ chatID, userID }: any) => {
-      await editOneChatByID(chatID, {
-        $addToSet: { users: userID },
-      });
+    socket.on(
+      "joinChat",
+      async ({ chatID, userID }: { chatID: string; userID: string }) => {
+        await editOneChatByID(chatID, {
+          $addToSet: { users: userID },
+        });
 
-      socket.join(chatID);
+        socket.join(chatID);
 
-      const chat = await getOneChatByID(chatID);
+        const chat = await getOneChatByID(chatID);
 
-      if (chat) {
-        socket.emit("chatHistory", chat?.messages);
-        socket.emit("chatInfo", chat);
+        if (chat) {
+          socket.emit("chatHistory", chat?.messages);
+          socket.emit("chatInfo", chat);
+        }
       }
-    });
+    );
   } catch (err: any) {
     throw fastify.httpErrors.internalServerError(err?.message);
   }
