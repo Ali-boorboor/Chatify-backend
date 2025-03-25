@@ -11,7 +11,7 @@ import type { chatReqDataType, userInfoType } from "#t/types";
 
 export const create = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const { title, description, users } = req.body as chatReqDataType;
+    const { title, description } = req.body as chatReqDataType;
     const file: any = req.file;
 
     const repeatedChatData = await service.getOneChat({ title });
@@ -28,7 +28,6 @@ export const create = async (req: FastifyRequest, res: FastifyReply) => {
         ? `${process.env.BASE_FILE_URL}${process.env.CHATS_COVER_URL}${file?.filename}`
         : undefined,
       title,
-      users: JSON.parse(users),
       description,
       identifier: `#${title.trim().toLowerCase()}`,
     });
@@ -53,8 +52,7 @@ export const create = async (req: FastifyRequest, res: FastifyReply) => {
 
 export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const { _id } = req.user as userInfoType;
-    const chats = await service.getAllChats(_id);
+    const chats = await service.getAllChats();
 
     checkNoContentData({ checkableData: chats, res });
 

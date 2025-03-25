@@ -72,7 +72,7 @@ export type checkUserPasswordType = {
 export type chatDataType = {
   title: string;
   description?: string;
-  users: string[];
+  // users: string[];
   cover?: string;
   messages?: string[];
   identifier: string;

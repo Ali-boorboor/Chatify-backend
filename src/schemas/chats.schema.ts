@@ -21,13 +21,6 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    users: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "Users",
-        required: true,
-      },
-    ],
     messages: [
       {
         type: mongoose.Types.ObjectId,

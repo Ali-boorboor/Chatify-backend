@@ -8,18 +8,14 @@ export const createChat = async (chatData: chatDataType) => {
   const newChat = createdChat.toObject();
 
   Reflect.deleteProperty(newChat, "messages");
-  Reflect.deleteProperty(newChat, "users");
   Reflect.deleteProperty(newChat, "cover");
   Reflect.deleteProperty(newChat, "__v");
 
   return newChat;
 };
 
-export const getAllChats = async (userID: string) => {
-  const chats = await ChatModel.find({})
-    .select("-__v -messages")
-    .populate("users", "username identifier")
-    .lean();
+export const getAllChats = async () => {
+  const chats = await ChatModel.find({}).select("-__v -messages").lean();
 
   return chats;
 };
@@ -28,7 +24,6 @@ export const getOneChat = async (filter: object) => {
   const chat = await ChatModel.findOne(filter)
     .select("-__v")
     .populate("messages", "-__v")
-    .populate("users", "-password -createdAt -updatedAt -__v")
     .lean();
 
   return chat;
@@ -45,7 +40,6 @@ export const getOneChatByID = async (chatID: IDType) => {
         select: "-__v -password -createdAt -updatedAt -email",
       },
     })
-    .populate("users", "-email -password -createdAt -updatedAt -__v")
     .lean();
 
   return chat;
@@ -58,7 +52,6 @@ export const editOneChatByID = async (
   const chatDatas = await ChatModel.findByIdAndUpdate(chatID, newData)
     .select("-__v")
     .populate("messages", "-__v")
-    .populate("users", "-password -createdAt -updatedAt -__v")
     .lean();
 
   return chatDatas;
@@ -66,7 +59,7 @@ export const editOneChatByID = async (
 
 export const deleteOneChatByID = async (chatID: IDType) => {
   const deletedChat = await ChatModel.findByIdAndDelete(chatID)
-    .select("-__v -users -createdAt -updatedAt -messages")
+    .select("-__v -createdAt -updatedAt -messages")
     .lean();
 
   return deletedChat;

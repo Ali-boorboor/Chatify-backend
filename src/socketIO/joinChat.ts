@@ -1,26 +1,21 @@
-import { getOneChatByID, editOneChatByID } from "#s/chats.service";
+import { getOneChatByID } from "#s/chats.service";
 import type { FastifyInstance } from "fastify/types/instance";
 import type { Socket } from "socket.io";
 
 const joinChat = (fastify: FastifyInstance, socket: Socket) => {
   try {
-    socket.on(
-      "joinChat",
-      async ({ chatID, userID }: { chatID: string; userID: string }) => {
-        await editOneChatByID(chatID, {
-          $addToSet: { users: userID },
-        });
+    socket.on("joinChat", async ({ chatID }: { chatID: string }) => {
+      socket.join(chatID);
 
-        socket.join(chatID);
+      const chat = await getOneChatByID(chatID);
+      const socketsInRoom = await fastify.io.to(chatID).allSockets();
 
-        const chat = await getOneChatByID(chatID);
-
-        if (chat) {
-          socket.emit("chatHistory", chat?.messages);
-          socket.emit("chatInfo", chat);
-        }
+      if (chat) {
+        fastify.io.to(chatID).emit("chatHistory", chat?.messages);
+        fastify.io.to(chatID).emit("chatInfo", chat);
+        fastify.io.to(chatID).emit("onlineUsers", socketsInRoom.size);
       }
-    );
+    });
   } catch (err: any) {
     throw fastify.httpErrors.internalServerError(err?.message);
   }
