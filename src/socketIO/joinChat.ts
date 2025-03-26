@@ -11,8 +11,7 @@ const joinChat = (fastify: FastifyInstance, socket: Socket) => {
       const socketsInRoom = await fastify.io.in(chatID).allSockets();
 
       if (chat) {
-        fastify.io.in(chatID).emit("chatHistory", chat?.messages);
-        fastify.io.in(chatID).emit("chatInfo", chat);
+        fastify.io.in(chatID).emit("chatInfos", chat);
         fastify.io.in(chatID).emit("onlineUsers", socketsInRoom.size);
       }
     });

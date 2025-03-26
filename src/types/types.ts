@@ -90,6 +90,7 @@ export type chatEditDataType = {
   description?: string;
   users?: string[];
   messages?: string[];
+  medias?: string[];
 };
 
 export type folderDataType = {
@@ -114,6 +115,11 @@ export type messageDataType = {
   sender: string;
 };
 
+export type mediaDataType = {
+  media: string;
+  sender: string;
+};
+
 export type messageDatasSocketType = {
   message: string;
   chatID: string;
@@ -123,4 +129,11 @@ export type messageDatasSocketType = {
 export type checkParamType = {
   param: string;
   res: FastifyReply;
+};
+
+export type mediaDatasSocketType = {
+  file: string;
+  chatID: string;
+  senderID: string;
+  fileName: string;
 };

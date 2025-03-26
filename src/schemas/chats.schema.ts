@@ -29,6 +29,14 @@ const schema = new mongoose.Schema(
         required: false,
       },
     ],
+    medias: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Medias",
+        default: [],
+        required: false,
+      },
+    ],
   },
   { timestamps: true }
 );

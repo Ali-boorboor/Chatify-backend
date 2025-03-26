@@ -17,7 +17,7 @@ export const createChat = async (chatData: chatDataType) => {
 export const getAllChats = async () => {
   const chats = await ChatModel.find({})
     .sort({ _id: -1 })
-    .select("-__v -messages")
+    .select("-__v -messages -medias")
     .lean();
 
   return chats;
@@ -27,6 +27,7 @@ export const getOneChat = async (filter: object) => {
   const chat = await ChatModel.findOne(filter)
     .select("-__v")
     .populate("messages", "-__v")
+    .populate("medias", "-__v")
     .lean();
 
   return chat;
@@ -37,6 +38,14 @@ export const getOneChatByID = async (chatID: IDType) => {
     .select("-__v")
     .populate({
       path: "messages",
+      select: "-__v",
+      populate: {
+        path: "sender",
+        select: "-__v -password -createdAt -updatedAt -email",
+      },
+    })
+    .populate({
+      path: "medias",
       select: "-__v",
       populate: {
         path: "sender",
@@ -55,6 +64,7 @@ export const editOneChatByID = async (
   const chatDatas = await ChatModel.findByIdAndUpdate(chatID, newData)
     .select("-__v")
     .populate("messages", "-__v")
+    .populate("medias", "-__v")
     .lean();
 
   return chatDatas;
@@ -62,7 +72,7 @@ export const editOneChatByID = async (
 
 export const deleteOneChatByID = async (chatID: IDType) => {
   const deletedChat = await ChatModel.findByIdAndDelete(chatID)
-    .select("-__v -createdAt -updatedAt -messages")
+    .select("-__v -createdAt -updatedAt -messages -medias")
     .lean();
 
   return deletedChat;
