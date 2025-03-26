@@ -37,13 +37,15 @@ fastify.register(fastifyMultipart);
 
 // * register cors
 await fastify.register(fastifyCors, {
-  origin: "*",
+  origin: "http://192.168.1.100:3040",
+  credentials: true,
 });
 
 // ^ register socket connection
 fastify.register(fastifySocket, {
   cors: {
-    origin: "*",
+    origin: "http://192.168.1.100:3040",
+    methods: ["GET", "POST"],
   },
 });
 
@@ -60,7 +62,7 @@ fastify.register(fastifySensible);
 
     await dbConnection(fastify);
 
-    await fastify.listen({ port });
+    await fastify.listen({ port, host: "0.0.0.0" });
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

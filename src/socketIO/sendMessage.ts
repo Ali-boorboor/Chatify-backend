@@ -18,7 +18,7 @@ const sendMessage = (fastify: FastifyInstance, socket: Socket) => {
           $push: { messages: newMessageDatas?._id },
         });
 
-        fastify.io.to(messageDatas?.chatID).emit("newMessage", newMessageDatas);
+        fastify.io.in(messageDatas?.chatID).emit("newMessage", newMessageDatas);
       }
     );
   } catch (err: any) {

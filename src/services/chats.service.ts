@@ -15,7 +15,10 @@ export const createChat = async (chatData: chatDataType) => {
 };
 
 export const getAllChats = async () => {
-  const chats = await ChatModel.find({}).select("-__v -messages").lean();
+  const chats = await ChatModel.find({})
+    .sort({ _id: -1 })
+    .select("-__v -messages")
+    .lean();
 
   return chats;
 };

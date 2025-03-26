@@ -8,12 +8,12 @@ const joinChat = (fastify: FastifyInstance, socket: Socket) => {
       socket.join(chatID);
 
       const chat = await getOneChatByID(chatID);
-      const socketsInRoom = await fastify.io.to(chatID).allSockets();
+      const socketsInRoom = await fastify.io.in(chatID).allSockets();
 
       if (chat) {
-        fastify.io.to(chatID).emit("chatHistory", chat?.messages);
-        fastify.io.to(chatID).emit("chatInfo", chat);
-        fastify.io.to(chatID).emit("onlineUsers", socketsInRoom.size);
+        fastify.io.in(chatID).emit("chatHistory", chat?.messages);
+        fastify.io.in(chatID).emit("chatInfo", chat);
+        fastify.io.in(chatID).emit("onlineUsers", socketsInRoom.size);
       }
     });
   } catch (err: any) {
