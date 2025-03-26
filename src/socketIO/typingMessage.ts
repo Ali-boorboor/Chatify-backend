@@ -23,7 +23,7 @@ const typingMessage = (fastify: FastifyInstance, socket: Socket) => {
           throw fastify.httpErrors.notFound();
         }
 
-        socket.broadcast.volatile.emit("isTyping", {
+        socket.broadcast.volatile.in(chatID).emit("isTyping", {
           username: userDatas?.username,
           isTyping,
         });
