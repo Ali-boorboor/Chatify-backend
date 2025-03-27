@@ -2,12 +2,18 @@ import path from "path";
 import response from "#u/response";
 import checkParam from "#u/checkParam";
 import * as service from "#s/chats.service";
+import * as usersService from "#s/users.service";
 import checkRepeatedData from "#u/checkRepeatedData";
 import removeFileHandler from "#u/removeFileHandler";
 import checkNoContentData from "#u/checkNoContentData";
 import type { FastifyRequest } from "fastify/types/request";
 import type { FastifyReply } from "fastify/types/reply";
-import type { chatReqDataType, userInfoType } from "#t/types";
+import type {
+  chatReqDataType,
+  pvChatReqDataType,
+  userInfoType,
+} from "#t/types";
+import checkUserExistance from "#src/utils/checkUserExistance.ts";
 
 export const create = async (req: FastifyRequest, res: FastifyReply) => {
   try {
@@ -50,9 +56,60 @@ export const create = async (req: FastifyRequest, res: FastifyReply) => {
   }
 };
 
+export const createPvChat = async (req: FastifyRequest, res: FastifyReply) => {
+  try {
+    const { sender, receiver } = req.body as pvChatReqDataType;
+
+    const senderUserDatas = await usersService.getOneUserByID(sender);
+    const receiverUserDatas = await usersService.getOneUserByID(receiver);
+
+    checkUserExistance({ checkableData: senderUserDatas, res });
+    checkUserExistance({ checkableData: receiverUserDatas, res });
+
+    const result = await service.createChat({
+      title: receiverUserDatas!.username,
+      identifier: receiverUserDatas!.identifier,
+      cover: receiverUserDatas!.cover || undefined,
+      description: receiverUserDatas!.description || undefined,
+      pvAccessUsers: [sender, receiver],
+      isPV: true,
+    });
+
+    await service.createChat({
+      title: senderUserDatas!.username,
+      identifier: senderUserDatas!.identifier,
+      cover: senderUserDatas!.cover || undefined,
+      description: senderUserDatas!.description || undefined,
+      pvAccessUsers: [sender, receiver],
+      isPV: true,
+    });
+
+    return response({
+      res,
+      data: result,
+      statusCode: 201,
+      message: "Chat created successfully",
+    });
+  } catch (err: any) {
+    throw res.internalServerError(err?.message);
+  }
+};
+
 export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const chats = await service.getAllChats();
+    const { _id, username } = req.user as userInfoType;
+
+    const chats = await service.getAllChats({
+      $and: [
+        {
+          $or: [
+            { pvAccessUsers: { $in: [_id] } },
+            { pvAccessUsers: { $exists: false } },
+          ],
+        },
+        { title: { $ne: username } },
+      ],
+    });
 
     checkNoContentData({ checkableData: chats, res });
 

@@ -14,6 +14,12 @@ const chatsRouter = (fastify: FastifyInstance) => {
     controller.create
   );
 
+  fastify.post(
+    "/create/pv",
+    { preHandler: authGuard },
+    controller.createPvChat
+  );
+
   fastify.get("/", { preHandler: authGuard }, controller.getAll);
 
   fastify.get("/:chatID", { preHandler: authGuard }, controller.getOne);

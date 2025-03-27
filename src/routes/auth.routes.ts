@@ -18,6 +18,8 @@ const authRouter = (fastify: FastifyInstance) => {
 
   fastify.post("/login", controller.login);
 
+  fastify.post("/forgot-password", controller.forgotPassword);
+
   fastify.post("/logout", { preHandler: authGuard }, controller.logout);
 
   fastify.get("/", { preHandler: authGuard }, controller.auth);

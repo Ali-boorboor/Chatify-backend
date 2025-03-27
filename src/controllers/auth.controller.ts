@@ -102,6 +102,7 @@ export const login = async (req: FastifyRequest, res: FastifyReply) => {
     const userInfo = {
       userID: userData?._id,
       cover: userData?.cover,
+      background: userData?.background,
       username: userData?.username,
       identifier: userData?.identifier,
     };
@@ -147,6 +148,48 @@ export const auth = async (req: FastifyRequest, res: FastifyReply) => {
     });
   } catch (err: any) {
     throw res.unauthorized("Invalid token");
+  }
+};
+
+export const forgotPassword = async (
+  req: FastifyRequest,
+  res: FastifyReply
+) => {
+  try {
+    const { identifier } = req.body as { identifier: string };
+
+    const user = await service.getOneUser({
+      $or: [{ email: identifier }, { username: identifier }],
+    });
+
+    checkUserExistance({
+      checkableData: user,
+      res,
+    });
+
+    const randomCode = generateRandomCode();
+
+    await service.editOneUserByID(user?._id!, {
+      password: randomCode,
+    });
+
+    emailConfigs.sendMail(
+      {
+        to: user?.email,
+        subject: "Forgot Password",
+        text: `Your New Password: ${randomCode}, Please Change Your Password Once You Logged in.`,
+      },
+      (err) => {
+        if (err) throw res.internalServerError(err.message);
+      }
+    );
+
+    return response({
+      res,
+      message: "New Password sent to email",
+    });
+  } catch (err: any) {
+    throw res.internalServerError(err?.message);
   }
 };
 

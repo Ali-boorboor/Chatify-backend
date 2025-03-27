@@ -21,6 +21,18 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    isPV: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    pvAccessUsers: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Users",
+        required: false,
+      },
+    ],
     messages: [
       {
         type: mongoose.Types.ObjectId,

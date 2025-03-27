@@ -1,26 +1,40 @@
+import uploader from "#mid/uploader";
 import authGuard from "#mid/auth.guard";
 import * as controller from "#c/users.controller";
 import type { FastifyInstance } from "fastify";
 
-const usersRouter = (fastify: FastifyInstance) => {
-  fastify.route({
-    method: ["GET", "PUT", "DELETE"],
-    url: "/:userID",
-    preHandler: authGuard,
-    handler: async (req, res) => {
-      switch (req.method) {
-        case "GET":
-          return controller.getAll(req, res);
-        case "PUT":
-          return controller.getAll(req, res);
-        case "DELETE":
-          return controller.getAll(req, res);
+const destination = process.env.USERS_COVER_URL!;
+const backgroundDestination = process.env.BACKGROUNDS_COVER_URL!;
 
-        default:
-          return res.methodNotAllowed("Request method not allowed");
-      }
-    },
-  });
+const multerUploader = uploader({ destination });
+const backgroundMulterUploader = uploader({
+  destination: backgroundDestination,
+});
+
+const usersRouter = (fastify: FastifyInstance) => {
+  fastify.put(
+    "/change-password",
+    { preHandler: authGuard },
+    controller.changePassword
+  );
+
+  fastify.put(
+    "/change-username",
+    { preHandler: authGuard },
+    controller.changeUsername
+  );
+
+  fastify.put(
+    "/change-cover",
+    { preHandler: [authGuard, multerUploader.single("cover")] },
+    controller.changeCover
+  );
+
+  fastify.put(
+    "/change-background",
+    { preHandler: [authGuard, backgroundMulterUploader.single("background")] },
+    controller.changeBackground
+  );
 
   fastify.get("/", { preHandler: authGuard }, controller.getAll);
 };

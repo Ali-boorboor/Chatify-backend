@@ -1,3 +1,4 @@
+import type mongoose from "mongoose";
 import type { FastifyReply } from "fastify/types/reply";
 import type { FastifyRequest } from "fastify/types/request";
 
@@ -6,6 +7,7 @@ export type UserDataType = {
   username: string;
   email: string;
   cover?: string;
+  background?: string;
   password: string;
   description?: string;
 };
@@ -21,7 +23,7 @@ export type loginReqDataType = {
   password: string;
 };
 
-export type IDType = string;
+export type IDType = string | mongoose.Types.ObjectId;
 
 export type UserNewDataType = {
   username?: string;
@@ -72,23 +74,30 @@ export type checkUserPasswordType = {
 export type chatDataType = {
   title: string;
   description?: string;
-  // users: string[];
+  pvAccessUsers?: string[];
   cover?: string;
   messages?: string[];
+  medias?: string[];
   identifier: string;
+  isPV?: boolean;
 };
 
 export type chatReqDataType = {
   title: string;
   description?: string;
-  users: any;
+  pvAccessUsers: any;
   messages?: string[];
+};
+
+export type pvChatReqDataType = {
+  sender: string;
+  receiver: string;
 };
 
 export type chatEditDataType = {
   title?: string;
   description?: string;
-  users?: string[];
+  pvAccessUsers?: string[];
   messages?: string[];
   medias?: string[];
 };
@@ -103,11 +112,6 @@ export type folderDataType = {
 export type folderReqDataType = {
   title: string;
   chats?: string[];
-};
-
-export type userInfoType = {
-  _id: string;
-  username: string;
 };
 
 export type messageDataType = {
@@ -136,4 +140,19 @@ export type mediaDatasSocketType = {
   chatID: string;
   senderID: string;
   fileName: string;
+};
+
+export type userInfoType = {
+  _id: string;
+  username: string;
+};
+
+export type changePasswordReqBody = {
+  currentPassword: string;
+  newPassword: string;
+};
+
+export type changeUsernameReqBody = {
+  newUsername: string;
+  password: string;
 };
