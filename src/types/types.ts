@@ -16,6 +16,7 @@ export type signupReqDataType = {
   username: string;
   email: string;
   password: string;
+  description?: string;
 };
 
 export type loginReqDataType = {
@@ -74,7 +75,7 @@ export type checkUserPasswordType = {
 export type chatDataType = {
   title: string;
   description?: string;
-  pvAccessUsers?: string[];
+  pvAccessUsers?: string[] | mongoose.Types.ObjectId[];
   cover?: string;
   messages?: string[];
   medias?: string[];

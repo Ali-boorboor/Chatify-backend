@@ -75,15 +75,6 @@ export const createPvChat = async (req: FastifyRequest, res: FastifyReply) => {
       isPV: true,
     });
 
-    await service.createChat({
-      title: senderUserDatas!.username,
-      identifier: senderUserDatas!.identifier,
-      cover: senderUserDatas!.cover || undefined,
-      description: senderUserDatas!.description || undefined,
-      pvAccessUsers: [sender, receiver],
-      isPV: true,
-    });
-
     return response({
       res,
       data: result,
@@ -97,7 +88,7 @@ export const createPvChat = async (req: FastifyRequest, res: FastifyReply) => {
 
 export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const { _id, username } = req.user as userInfoType;
+    const { _id } = req.user as userInfoType;
 
     const chats = await service.getAllChats({
       $and: [
@@ -107,7 +98,6 @@ export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
             { pvAccessUsers: { $exists: false } },
           ],
         },
-        { title: { $ne: username } },
       ],
     });
 

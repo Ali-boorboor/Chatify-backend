@@ -39,10 +39,14 @@ export const editOneUserByID = async (
   newData: UpdateQuery<UserNewDataType>
 ) => {
   const editedUser = await UserModel.findByIdAndUpdate(UserID, newData)
-    .select("-password -email -cover -background -__v")
+    .select("-password -email -__v")
     .lean();
 
-  return editedUser;
+  const user = await UserModel.findById(editedUser?._id)
+    .select("-password -email -__v")
+    .lean();
+
+  return user;
 };
 
 export const deleteOneUser = async (userID: IDType) => {

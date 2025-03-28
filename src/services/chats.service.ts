@@ -18,7 +18,9 @@ export const createChat = async (chatData: chatDataType) => {
 export const getAllChats = async (filter: object) => {
   const chats = await ChatModel.find(filter)
     .sort({ _id: -1 })
-    .select("-__v -messages -medias -pvAccessUsers")
+    .populate("pvAccessUsers", "-__v -password -createdAt -updatedAt -email")
+    .populate("messages", "-__v -sender -createdAt -updatedAt")
+    .select("-__v -medias")
     .lean();
 
   return chats;

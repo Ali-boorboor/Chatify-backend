@@ -4,6 +4,7 @@ import verifyCodeModel from "#m/verifyCode";
 import * as service from "#s/users.service";
 import generateToken from "#u/generateToken";
 import emailConfigs from "#cnfg/emailConfigs";
+import * as chatService from "#s/chats.service";
 import removeFileHandler from "#u/removeFileHandler";
 import checkRepeatedData from "#u/checkRepeatedData";
 import checkUserPassword from "#u/checkUserPassword";
@@ -20,11 +21,16 @@ import type {
 
 export const signup = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const { username, email, password } = req.body as signupReqDataType;
+    const { username, email, password, description } =
+      req.body as signupReqDataType;
     const file: any = req?.file;
 
     const repeatedUserData = await service.getOneUser({
-      $or: [{ username }, { email }],
+      $or: [
+        { username },
+        { email },
+        { identifier: `@${username.trim().toLowerCase()}` },
+      ],
     });
 
     checkRepeatedData({
@@ -42,6 +48,20 @@ export const signup = async (req: FastifyRequest, res: FastifyReply) => {
       username,
       email,
       password,
+      description,
+    });
+
+    const allUsers = await service.getAllUsers();
+
+    allUsers.forEach(async (user) => {
+      await chatService.createChat({
+        pvAccessUsers: [result?._id, user?._id],
+        identifier: result?.identifier,
+        description: result?.cover!,
+        title: result?.username,
+        cover: result?.cover!,
+        isPV: true,
+      });
     });
 
     const randomCode = generateRandomCode();
