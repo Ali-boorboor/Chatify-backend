@@ -60,6 +60,9 @@ export const createPvChat = async (req: FastifyRequest, res: FastifyReply) => {
   try {
     const { sender, receiver } = req.body as pvChatReqDataType;
 
+    checkParam({ param: sender, res });
+    checkParam({ param: receiver, res });
+
     const senderUserDatas = await usersService.getOneUserByID(sender);
     const receiverUserDatas = await usersService.getOneUserByID(receiver);
 

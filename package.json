@@ -42,6 +42,7 @@
     "fastify-socket.io": "^5.1.0",
     "mongoose": "^8.12.1",
     "nodemailer": "^6.10.0",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "yup": "^1.6.1"
   }
 }
