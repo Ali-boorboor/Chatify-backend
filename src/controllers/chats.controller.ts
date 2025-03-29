@@ -101,7 +101,9 @@ export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
       ],
     });
 
-    checkNoContentData({ checkableData: chats, res });
+    const noContentResponse = checkNoContentData({ checkableData: chats, res });
+
+    if (noContentResponse) return;
 
     return response({ res, message: "Chat rooms list", data: chats });
   } catch (err: any) {
@@ -117,7 +119,9 @@ export const getOne = async (req: FastifyRequest, res: FastifyReply) => {
 
     const chat = await service.getOneChatByID(chatID);
 
-    checkNoContentData({ checkableData: chat!, res });
+    const noContentResponse = checkNoContentData({ checkableData: chat!, res });
+
+    if (noContentResponse) return;
 
     return response({ res, message: "Chat Datas", data: chat! });
   } catch (err: any) {

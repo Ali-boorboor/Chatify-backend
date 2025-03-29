@@ -54,14 +54,18 @@ export const signup = async (req: FastifyRequest, res: FastifyReply) => {
     const allUsers = await service.getAllUsers();
 
     allUsers.forEach(async (user) => {
-      await chatService.createChat({
-        pvAccessUsers: [result?._id, user?._id],
-        identifier: result?.identifier,
-        description: result?.cover!,
-        title: result?.username,
-        cover: result?.cover!,
-        isPV: true,
-      });
+      if (String(user?._id) !== String(result?._id)) {
+        await chatService.createChat({
+          pvAccessUsers: [result?._id, user?._id],
+          identifier: result?.identifier,
+          description: result?.cover!,
+          title: result?.username,
+          cover: file?.filename
+            ? `${process.env.BASE_FILE_URL}${process.env.USERS_COVER_URL}${file?.filename}`
+            : undefined,
+          isPV: true,
+        });
+      }
     });
 
     const randomCode = generateRandomCode();
@@ -88,10 +92,17 @@ export const signup = async (req: FastifyRequest, res: FastifyReply) => {
   } catch (err: any) {
     const file: any = req.file;
 
-    removeFileHandler(
-      path.join(__dirname, "../", process.env.USERS_COVER_URL!, file?.filename),
-      res
-    );
+    if (file?.filename) {
+      removeFileHandler(
+        path.join(
+          __dirname,
+          "../",
+          process.env.USERS_COVER_URL!,
+          file?.filename
+        ),
+        res
+      );
+    }
 
     throw res.internalServerError(err?.message);
   }
@@ -219,7 +230,12 @@ export const verifyCode = async (req: FastifyRequest, res: FastifyReply) => {
 
     const foundCode = await verifyCodeModel.findOne({ code }).lean();
 
-    checkNoContentData({ checkableData: foundCode!, res });
+    const noContentResponse = checkNoContentData({
+      checkableData: foundCode!,
+      res,
+    });
+
+    if (noContentResponse) return;
 
     if (foundCode?.usedTime! >= foundCode?.maxUse!) {
       throw res.unauthorized("Invalid code");

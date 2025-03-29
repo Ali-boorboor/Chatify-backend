@@ -203,7 +203,9 @@ export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
   try {
     const users = await service.getAllUsers();
 
-    checkNoContentData({ checkableData: users, res });
+    const noContentResponse = checkNoContentData({ checkableData: users, res });
+
+    if (noContentResponse) return;
 
     return response({ res, message: "Users list", data: users });
   } catch (err: any) {

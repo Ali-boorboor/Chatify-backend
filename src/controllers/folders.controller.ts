@@ -44,7 +44,12 @@ export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
 
     const folders = await service.getAllFolders(_id);
 
-    checkNoContentData({ checkableData: folders, res });
+    const noContentResponse = checkNoContentData({
+      checkableData: folders,
+      res,
+    });
+
+    if (noContentResponse) return;
 
     return response({ res, message: "Folders list", data: folders });
   } catch (err: any) {
@@ -60,7 +65,12 @@ export const getOne = async (req: FastifyRequest, res: FastifyReply) => {
 
     const folder = await service.getOneFolderByID(folderID);
 
-    checkNoContentData({ checkableData: folder!, res });
+    const noContentResponse = checkNoContentData({
+      checkableData: folder!,
+      res,
+    });
+
+    if (noContentResponse) return;
 
     return response({ res, message: "Folder Datas", data: folder! });
   } catch (err: any) {

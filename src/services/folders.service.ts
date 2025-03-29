@@ -28,7 +28,14 @@ export const getAllFolders = async (userID: string) => {
 export const getOneFolderByID = async (folderID: IDType) => {
   const folder = await FolderModel.findById(folderID)
     .select("-__v -user")
-    .populate("chats", "-__v -pvAccessUsers -messages")
+    .populate({
+      path: "chats",
+      select: "-__v -pvAccessUsers",
+      populate: {
+        path: "messages",
+        select: "-__v -sender",
+      },
+    })
     .lean();
 
   return folder;

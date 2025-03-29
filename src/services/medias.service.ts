@@ -25,3 +25,11 @@ export const getOneMediaByID = async (MediaID: IDType) => {
 
   return media;
 };
+
+export const deleteOneMediaByID = async (MediaID: IDType) => {
+  const media = await MediaModel.findByIdAndDelete(MediaID)
+    .select("-__v -sender")
+    .lean();
+
+  return media;
+};

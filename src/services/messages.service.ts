@@ -25,3 +25,11 @@ export const getOneMessageByID = async (MessageID: IDType) => {
 
   return message;
 };
+
+export const deleteOneMessageByID = async (MessageID: IDType) => {
+  const message = await MessageModel.findByIdAndDelete(MessageID)
+    .select("-__v -sender")
+    .lean();
+
+  return message;
+};
