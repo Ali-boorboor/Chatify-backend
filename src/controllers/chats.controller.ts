@@ -93,10 +93,7 @@ export const getAll = async (req: FastifyRequest, res: FastifyReply) => {
     const chats = await service.getAllChats({
       $and: [
         {
-          $or: [
-            { pvAccessUsers: { $in: [_id] } },
-            { pvAccessUsers: { $exists: false } },
-          ],
+          $or: [{ pvAccessUsers: { $in: [_id] } }, { isPV: false }],
         },
       ],
     });

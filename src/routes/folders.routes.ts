@@ -8,6 +8,8 @@ const foldersRouter = (fastify: FastifyInstance) => {
   fastify.get("/", { preHandler: authGuard }, controller.getAll);
 
   fastify.get("/:folderID", { preHandler: authGuard }, controller.getOne);
+
+  fastify.delete("/:folderID", { preHandler: authGuard }, controller.deleteOne);
 };
 
 export default foldersRouter;

@@ -51,3 +51,11 @@ export const getOneFolderByTitle = async (title: string) => {
 
   return user;
 };
+
+export const deleteOneFolderByID = async (folderID: IDType) => {
+  const folder = await FolderModel.findByIdAndDelete(folderID)
+    .select("-__v -user -chats")
+    .lean();
+
+  return folder;
+};

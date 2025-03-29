@@ -77,3 +77,25 @@ export const getOne = async (req: FastifyRequest, res: FastifyReply) => {
     throw res.internalServerError(err?.message);
   }
 };
+
+export const deleteOne = async (req: FastifyRequest, res: FastifyReply) => {
+  try {
+    const { folderID } = req.params as { folderID: string };
+
+    checkParam({ param: folderID, res });
+
+    const result = await service.deleteOneFolderByID(folderID);
+
+    if (!result) {
+      return res.notFound("No Folder Found");
+    }
+
+    return response({
+      res,
+      message: "Folder Deleted Successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    throw res.internalServerError(err?.message);
+  }
+};
