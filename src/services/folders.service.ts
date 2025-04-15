@@ -30,10 +30,14 @@ export const getOneFolderByID = async (folderID: IDType) => {
     .select("-__v -user")
     .populate({
       path: "chats",
-      select: "-__v -pvAccessUsers",
+      select: "-__v",
       populate: {
         path: "messages",
         select: "-__v -sender",
+        populate: {
+          path: "pvAccessUsers",
+          select: "-__v -password -createdAt -updatedAt -email",
+        },
       },
     })
     .lean();
